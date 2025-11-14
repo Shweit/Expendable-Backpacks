@@ -1,6 +1,6 @@
-# 🎒 Expendable Backpacks
+# Expendable Backpacks
 
-A feature-rich backpack plugin for Paper/Spigot 1.21.1+ with 8 unique tiers, upgrades, and special Enderpack functionality!
+A comprehensive backpack plugin for Paper/Spigot servers featuring eight unique tiers, progressive upgrades, and shared storage capabilities through the Enderpack system.
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/shweit/expendable-backpacks)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.1-green.svg)](https://www.minecraft.net/)
@@ -8,22 +8,22 @@ A feature-rich backpack plugin for Paper/Spigot 1.21.1+ with 8 unique tiers, upg
 
 ---
 
-## ✨ Features
+## Features
 
-- 🎒 **8 Unique Backpack Tiers** - From Dirt to Netherite, each with increasing storage
-- 📦 **Automatic Inventory Saving** - Your items are safe, even after server restarts
-- 🔄 **Upgradeable Backpacks** - Craft upgrades to expand your storage without losing items
-- 🌌 **Special Enderpack** - Shared storage across multiple Enderpacks with the same ID
-- 🧬 **Enderpack Cloning** - Create multiple access points to the same storage
-- 🛡️ **Inception Protection** - Can't put backpacks inside other backpacks
-- 🎨 **Custom Textures** - Beautiful player head textures for each tier
-- 📖 **Interactive GUI Guide** - In-game guide showing all recipes and features
-- 💾 **Persistent Storage** - All backpacks saved to YAML with unique UUIDs
-- ⚡ **Performance Optimized** - Efficient inventory caching and saving
+- **Eight Backpack Tiers** - Progressive storage from 9 to 54 slots (Dirt, Leather, Copper, Iron, Gold, Diamond, Netherite, Enderpack)
+- **Automatic Inventory Persistence** - All backpack contents saved automatically with YAML-based storage
+- **Stackable Upgrades** - Upgrade backpacks by surrounding them with materials while preserving contents
+- **Enderpack System** - Shared storage across multiple Enderpacks using UUID-based identification
+- **Enderpack Cloning** - Create multiple access points to the same inventory
+- **Inception Protection** - Prevents nesting backpacks within other backpacks
+- **Custom Textures** - Unique player head textures for each tier
+- **Interactive GUI** - In-game guide displaying all crafting recipes and upgrade paths
+- **UUID-Based Storage** - Each backpack instance tracked with unique identifiers
+- **Performance Optimized** - Efficient inventory caching and asynchronous saving
 
 ---
 
-## 📊 Backpack Tiers
+## Backpack Tiers
 
 | Tier | Rows | Slots | Material | Color |
 |------|------|-------|----------|-------|
@@ -38,7 +38,7 @@ A feature-rich backpack plugin for Paper/Spigot 1.21.1+ with 8 unique tiers, upg
 
 ---
 
-## 🔨 Crafting Recipes
+## Crafting Recipes
 
 ### Leather Backpack (Starting Tier)
 ```
@@ -85,11 +85,13 @@ Surround your backpack with **8x upgrade material** in a crafting table:
 - **Gold → Diamond**: 8x Diamond
 - **Diamond → Netherite**: Smithing Table (Template + Diamond Backpack + Netherite Ingot)
 
-**⚠️ Important:** Upgrades preserve your items and UUID!
+**Note:** Upgrades preserve backpack contents and UUID identifiers.
 
 ---
 
-## 🎮 Commands
+## Commands
+
+All commands can be abbreviated using `/bp` as an alias for `/backpack`.
 
 | Command | Description | Permission |
 |---------|-------------|------------|
@@ -102,7 +104,7 @@ Surround your backpack with **8x upgrade material** in a crafting table:
 
 ---
 
-## 🔑 Permissions
+## Permissions
 
 | Permission | Description | Default |
 |------------|-------------|---------|
@@ -115,113 +117,103 @@ Surround your backpack with **8x upgrade material** in a crafting table:
 
 ---
 
-## 📥 Installation
+## Installation
 
-1. **Download** the latest `ExpendableBackpacks-1.0.0.jar` from [Releases](https://github.com/shweit/expendable-backpacks/releases)
-2. **Place** the JAR file in your server's `plugins/` folder
-3. **Restart** your server
-4. **Done!** Use `/backpack` to see the guide
+1. Download the latest `ExpendableBackpacks-1.0.0.jar` from the [Releases](https://github.com/shweit/expendable-backpacks/releases) page
+2. Place the JAR file in your server's `plugins/` directory
+3. Restart or reload your server
+4. Use `/backpack` to access the interactive guide
 
 ### Requirements
-- **Minecraft Version:** 1.21.1+
-- **Server Software:** Paper or Spigot
-- **Java Version:** 21+
+- Minecraft Version: 1.21.1 or higher
+- Server Software: Paper or Spigot
+- Java Version: 21 or higher
 
 ---
 
-## 🎯 Usage
+## Usage
 
 ### Opening Backpacks
-Simply **right-click** any backpack in your inventory to open it!
+Right-click any backpack item in your inventory to access its contents.
 
 ### Viewing the Guide
-Use `/backpack` to open an interactive GUI showing:
-- All backpack tiers
-- Crafting recipes with visual patterns
-- Upgrade paths
-- Special Enderpack features
+Execute `/backpack` to open an interactive GUI displaying:
+- All available backpack tiers and their specifications
+- Crafting recipes with visual pattern representations
+- Upgrade progression paths
+- Enderpack functionality details
 
 ### Creating Your First Backpack
-1. Craft a **Leather Backpack** (Leather + String + Chest)
-2. Right-click to open it
-3. Store your items!
-4. Upgrade it by surrounding it with materials
+1. Craft a Leather Backpack using Leather, String, and a Chest
+2. Right-click the backpack item to open its inventory
+3. Store items as needed
+4. Upgrade to higher tiers by surrounding with appropriate materials
 
 ---
 
-## 🌌 Enderpack Special Features
+## Enderpack System
 
-The **Enderpack** is unique:
-- 🔗 **Shared Storage**: All Enderpacks with the same ID share the same inventory
-- 🧬 **Clonable**: Craft 1 Enderpack + 1 Ender Pearl to get 2 Enderpacks with the same ID
-- 🏠 **Multiple Access Points**: Keep one in your inventory, one in a chest at your base, give one to a friend!
-- 💜 **Purple Themed**: Special lore and color coding
+The Enderpack provides unique shared storage functionality:
 
-### Example Use Case
-1. Craft an Enderpack
-2. Clone it (Enderpack + Ender Pearl = 2 Enderpacks with same ID)
-3. Keep one in your inventory, store one in a chest at your base, give one to a friend
-4. Everyone with an Enderpack of the same ID accesses the same storage!
+- **Shared Storage**: All Enderpacks with identical UUIDs access the same inventory
+- **Cloneable**: Combine one Enderpack with one Ender Pearl to create two Enderpacks sharing the same UUID
+- **Multiple Access Points**: Distribute cloned Enderpacks across different locations or players
+- **UUID-Based Identification**: Each Enderpack group identified by unique identifier
 
----
-
-## 💾 Data Storage
-
-Backpacks are stored in `plugins/ExpendableBackpacks/backpacks.yml`:
-- Each backpack has a unique UUID
-- Inventories are saved automatically
-- Data persists through server restarts
-- Tab completion shows all saved backpack UUIDs
+### Implementation Example
+1. Craft an initial Enderpack
+2. Clone the Enderpack by crafting it with an Ender Pearl (yields 2 Enderpacks with matching UUID)
+3. Distribute copies to different locations (inventory, storage chest, other players)
+4. All instances with the same UUID access shared storage
 
 ---
 
-## 🛠️ Configuration
+## Data Storage
 
-Currently, the plugin works out-of-the-box with no configuration needed!
-
-Future updates may include:
-- Customizable tier slots
-- Custom crafting recipes
-- Configurable textures
-- Permissions per tier
+Backpack data is persisted in `plugins/ExpendableBackpacks/backpacks.yml`:
+- UUID-based identification for each backpack instance
+- Automatic inventory serialization and saving
+- Data persistence across server restarts and reloads
+- Tab completion support for all registered backpack UUIDs
 
 ---
 
-## 🐛 Bug Reports & Suggestions
+## Configuration
 
-Found a bug or have a suggestion? Please open an issue on our [GitHub Issues](https://github.com/shweit/expendable-backpacks/issues) page!
+The plugin operates with default settings without additional configuration. Future releases may include:
+- Configurable storage capacity per tier
+- Customizable crafting recipes
+- Texture customization options
+- Per-tier permission requirements
 
 ---
 
-## 📝 Changelog
+## Issue Reporting
+
+Report bugs or submit feature requests through the [GitHub Issues](https://github.com/shweit/expendable-backpacks/issues) page.
+
+---
+
+## Changelog
 
 ### Version 1.0.0 - Initial Release
-- ✨ First public release
-- 🎒 8 backpack tiers (Dirt to Netherite + Enderpack)
-- 🌌 Enderpack with shared storage functionality
-- 🧬 Enderpack cloning system (1:1 ratio)
-- 🔄 Full upgrade system with material surrounding
-- 🛡️ Inception protection (title-based detection)
-- 📖 Interactive GUI guide with visual recipes
-- 💾 YAML-based persistent storage
-- ⚡ Performance optimized inventory caching
+- Eight backpack tiers with progressive storage (9-54 slots)
+- Enderpack shared storage system
+- Enderpack cloning mechanism (1:1 ratio)
+- Material-based upgrade system
+- Inception protection mechanism
+- Interactive GUI guide with recipe visualization
+- YAML-based persistent storage
+- Optimized inventory caching system
 
 ---
 
-## 📜 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🌟 Support
-
-If you enjoy this plugin, please consider:
-- ⭐ Starring this repository
-- 📢 Sharing it with your friends
-- 💬 Leaving a review on Modrinth/SpigotMC
-- ☕ [Buying me a coffee](https://www.buymeacoffee.com/shweit)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete details.
 
 ---
 
-Made with ❤️ for the Minecraft community
+## Contributing
+
+Contributions are welcome. Please ensure all code adheres to the project's style guidelines and passes all quality checks (Checkstyle, SpotBugs) before submitting pull requests.
