@@ -66,15 +66,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.0.1] - 2025-11-15
 
-### 🚀 Planned Features
-- Configurable tier sizes
-- Custom recipe configuration
-- Per-tier permissions
-- Statistics tracking
-- Multi-language support
-- Texture pack customization
+### 🐛 Fixed
+- **Critical**: Fixed duplicate UUID bug where all crafted leather backpacks shared the same inventory (#9)
+  - All players' leather backpacks were accessing the same storage
+  - Now generates unique UUID for each crafted leather backpack
+  - Added pattern detection in PrepareItemCraftEvent handler
+- **Auto-save**: Implemented automatic inventory saving to prevent data loss (#8)
+  - Backpack inventories now save immediately when closed
+  - Prevents item loss during server crashes or unexpected shutdowns
+
+### ✨ Added
+- GitHub Actions workflow for automated publishing to Modrinth
+- CLAUDE.md documentation for development guidance
+
+### 🔧 Dependencies
+- Bumped `com.github.spotbugs:spotbugs-annotations` from 4.9.6 to 4.9.8
+- Bumped `com.github.spotbugs` from 6.4.2 to 6.4.5
+- Bumped `org.junit.jupiter:junit-jupiter` from 6.0.0 to 6.0.1
+- Bumped `org.junit.platform:junit-platform-launcher` from 6.0.0 to 6.0.1
+
+### 🏗️ Build
+- Updated `actions/upload-artifact` from v4 to v5 in CI workflows
+
+---
+
+## [Unreleased]
 
 ### 🐛 Known Issues
 None currently reported
@@ -83,8 +101,9 @@ None currently reported
 
 ## Version History
 
+- **1.0.1** - Bug fixes and auto-save (2025-11-15)
 - **1.0.0** - Initial Release (2025-01-14)
 
 ---
 
-**Note**: This is the first public release of Expendable Backpacks. Please report any bugs or suggestions on our [GitHub Issues](https://github.com/shweit/expendable-backpacks/issues) page!
+**Note**: Please report any bugs or suggestions on our [GitHub Issues](https://github.com/shweit/expendable-backpacks/issues) page!
