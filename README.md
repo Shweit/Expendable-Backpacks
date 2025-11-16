@@ -2,7 +2,7 @@
 
 A comprehensive backpack plugin for Paper/Spigot servers featuring eight unique tiers, progressive upgrades, and shared storage capabilities through the Enderpack system.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/shweit/expendable-backpacks)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/shweit/expendable-backpacks)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.1-green.svg)](https://www.minecraft.net/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
