@@ -8,6 +8,7 @@ import com.shweit.expendablebackpacks.listeners.BackpackProtectionListener;
 import com.shweit.expendablebackpacks.listeners.BackpackSmithingListener;
 import com.shweit.expendablebackpacks.recipes.BackpackRecipes;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -16,28 +17,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ExpendableBackpacks extends JavaPlugin {
 
     private BackpackManager backpackManager;
-    private BackpackRecipes backpackRecipes;
 
     @Override
     public void onEnable() {
-        getLogger().info("╔════════════════════════════════╗");
-        getLogger().info("║  Expendable Backpacks v1.0.0   ║");
-        getLogger().info("║   Starting initialization...   ║");
-        getLogger().info("╚════════════════════════════════╝");
-
         // Initialize BackpackItem factory
         BackpackItem.initialize(this);
-        getLogger().info("✓ Backpack item factory initialized");
 
         // Initialize BackpackManager (storage)
         backpackManager = new BackpackManager(this);
         backpackManager.loadAllBackpacks();
-        getLogger().info("✓ Backpack storage loaded");
 
         // Register recipes
-        backpackRecipes = new BackpackRecipes(this);
+        BackpackRecipes backpackRecipes = new BackpackRecipes(this);
         backpackRecipes.registerAll();
-        getLogger().info("✓ Crafting recipes registered");
 
         // Register listeners
         getServer().getPluginManager().registerEvents(
@@ -50,16 +42,17 @@ public class ExpendableBackpacks extends JavaPlugin {
             new BackpackProtectionListener(), this);
         getServer().getPluginManager().registerEvents(
             new com.shweit.expendablebackpacks.gui.BackpackGuideGUI(), this);
-        getLogger().info("✓ Event listeners registered");
 
         // Register commands
         BackpackCommand backpackCommand = new BackpackCommand(backpackManager);
         getCommand("backpack").setExecutor(backpackCommand);
         getCommand("backpack").setTabCompleter(backpackCommand);
-        getLogger().info("✓ Commands registered");
+
+        // Initialize bStats metrics
+        new Metrics(this, 28070);
 
         getLogger().info("╔════════════════════════════════╗");
-        getLogger().info("║ Expendable Backpacks enabled! ✓║");
+        getLogger().info("║ Expendable Backpacks enabled!  ║");
         getLogger().info("║  8 Tiers • Stack Crafting      ║");
         getLogger().info("║  Enderpack Support • Commands  ║");
         getLogger().info("╚════════════════════════════════╝");
