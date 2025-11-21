@@ -3,7 +3,9 @@ package com.shweit.expendablebackpacks.listeners;
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
+import com.shweit.expendablebackpacks.util.BackpackBlockUtil;
 import java.util.UUID;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -46,20 +48,69 @@ public class BackpackInteractionListener implements Listener {
             return;
         }
 
+        Player player = event.getPlayer();
+
+        // Check if right-clicking on a backpack block
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block clickedBlock = event.getClickedBlock();
+            if (clickedBlock != null && BackpackBlockUtil.isBackpackBlock(clickedBlock)) {
+                event.setCancelled(true);
+                openBackpackBlock(player, clickedBlock);
+                return;
+            }
+        }
+
+        // Handle backpack items
         ItemStack item = event.getItem();
         if (!BackpackItem.isBackpack(item)) {
             return;
         }
 
+        // If player is sneaking, allow placement (don't cancel event)
+        if (player.isSneaking()) {
+            return;
+        }
+
+        // Otherwise, open the backpack inventory
         event.setCancelled(true);
 
-        Player player = event.getPlayer();
         @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
         UUID backpackUUID = BackpackItem.getBackpackUUID(item);
         BackpackTier tier = BackpackItem.getBackpackTier(item);
 
         if (backpackUUID == null || tier == null) {
             player.sendMessage("§cError: Invalid backpack data!");
+            return;
+        }
+
+        // Get or create inventory
+        String title = tier.getDisplayName();
+        Inventory inventory = backpackManager.getInventory(
+            backpackUUID, title, tier.getSlots());
+
+        // Open for player
+        player.openInventory(inventory);
+
+        // Send message for Enderpacks
+        if (tier.isEnderpack()) {
+            player.sendMessage(
+                "§5§lEnderpack §7opened! All Enderpacks with this ID share storage.");
+        }
+    }
+
+    /**
+     * Opens a placed backpack block for a player.
+     *
+     * @param player the player opening the backpack
+     * @param block the backpack block
+     */
+    private void openBackpackBlock(Player player, Block block) {
+        @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+        UUID backpackUUID = BackpackBlockUtil.getBackpackUUIDFromBlock(block);
+        BackpackTier tier = BackpackBlockUtil.getBackpackTierFromBlock(block);
+
+        if (backpackUUID == null || tier == null) {
+            player.sendMessage("§cError: Invalid backpack block data!");
             return;
         }
 

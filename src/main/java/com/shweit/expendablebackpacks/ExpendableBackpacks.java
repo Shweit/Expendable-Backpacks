@@ -2,12 +2,14 @@ package com.shweit.expendablebackpacks;
 
 import com.shweit.expendablebackpacks.commands.BackpackCommand;
 import com.shweit.expendablebackpacks.items.BackpackItem;
+import com.shweit.expendablebackpacks.listeners.BackpackBlockListener;
 import com.shweit.expendablebackpacks.listeners.BackpackCraftingListener;
 import com.shweit.expendablebackpacks.listeners.BackpackInteractionListener;
 import com.shweit.expendablebackpacks.listeners.BackpackProtectionListener;
 import com.shweit.expendablebackpacks.listeners.BackpackSmithingListener;
 import com.shweit.expendablebackpacks.recipes.BackpackRecipes;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
+import com.shweit.expendablebackpacks.util.BackpackBlockUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +24,9 @@ public class ExpendableBackpacks extends JavaPlugin {
     public void onEnable() {
         // Initialize BackpackItem factory
         BackpackItem.initialize(this);
+
+        // Initialize BackpackBlockUtil for block operations
+        BackpackBlockUtil.initialize(this);
 
         // Initialize BackpackManager (storage)
         backpackManager = new BackpackManager(this);
@@ -40,6 +45,8 @@ public class ExpendableBackpacks extends JavaPlugin {
             new BackpackInteractionListener(backpackManager), this);
         getServer().getPluginManager().registerEvents(
             new BackpackProtectionListener(), this);
+        getServer().getPluginManager().registerEvents(
+            new BackpackBlockListener(), this);
         getServer().getPluginManager().registerEvents(
             new com.shweit.expendablebackpacks.gui.BackpackGuideGUI(), this);
 
