@@ -92,6 +92,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2025-11-21
+
+### ✨ Added
+- **Placeable Backpacks**: Major new feature allowing backpacks to be placed as blocks
+  - Place backpacks using Shift + Right-click on any surface
+  - Right-click placed backpacks to open their inventory
+  - Breaking placed backpacks returns the item with all contents intact
+  - UUID and tier data preserved through item → block → item lifecycle
+  - Placed backpacks use Player Head blocks with custom textures
+  - Works seamlessly with all backpack tiers including Enderpacks
+- **Placeable Backpack Protection**: Comprehensive protection system for placed backpacks
+  - Explosion protection (Creeper, TNT, etc.)
+  - Block explosion protection (Beds, Respawn Anchors)
+  - Piston protection (push/pull immunity)
+  - Fire and lava immunity
+  - All protection events properly handled with high priority
+- **Enderpack Shared Storage for Placed Blocks**: Placed Enderpacks share inventory with item counterparts
+  - Multiple placed Enderpack blocks with same UUID access shared storage
+  - Perfect for creating multiple access points across bases
+  - Team storage functionality with placed blocks
+- **Starter Backpack Configuration**: Configurable first-join backpack system
+  - New `config.yml` with `give-backpack-on-first-join` option (default: false)
+  - Gives new players a Leather Backpack on their first server join
+  - Customizable welcome message with color code support
+  - Drops backpack at player location if inventory is full
+  - Only triggers for players who have never joined before
+- **New Utility Class**: BackpackBlockUtil for block operations
+  - `isBackpackBlock()` - Check if a block is a placed backpack
+  - `getBackpackUUIDFromBlock()` - Retrieve UUID from placed blocks
+  - `getBackpackTierFromBlock()` - Retrieve tier from placed blocks
+  - `setBlockData()` - Store UUID and tier in block PersistentDataContainer
+  - Uses same NamespacedKeys as items for consistency
+
+### 🎨 Changed
+- **Simplified Log Messages**: Cleaner server console output
+  - Removed ASCII box formatting from enable/disable messages
+  - More concise and professional log output
+  - "Expendable Backpacks has been enabled!" with feature list
+  - Single-line disable message
+- **Enhanced BackpackInteractionListener**: Updated interaction system
+  - Added sneak detection for placement vs opening
+  - Normal right-click opens backpack inventory
+  - Shift + right-click allows block placement
+  - Right-click on placed backpack blocks opens their inventory
+  - New `openBackpackBlock()` method for block interaction
+
+### 🔧 Technical Details
+- New `PlayerJoinListener` for first-join detection and starter backpack distribution
+- New `BackpackBlockListener` with 7 event handlers for placement and protection
+- Config system initialized with `saveDefaultConfig()` in main class
+- Block data stored in Skull PersistentDataContainer
+- All quality checks passing (Checkstyle, SpotBugs)
+- Maintains backward compatibility with existing backpacks
+
+### 📚 Documentation
+- Updated README.md with placeable backpacks section
+- Added configuration documentation
+- Updated Enderpack section to mention placed blocks
+- Created MOD_DESCRIPTION.md for mod platforms
+- Removed version numbers from documentation per project guidelines
+
+---
+
 ## [Unreleased]
 
 ### 🐛 Known Issues
@@ -101,8 +164,9 @@ None currently reported
 
 ## Version History
 
+- **1.1.0** - Placeable backpacks and starter config (2025-11-21)
 - **1.0.1** - Bug fixes and auto-save (2025-11-15)
-- **1.0.0** - Initial Release (2025-01-14)
+- **1.0.0** - Initial Release (2025-11-14)
 
 ---
 
