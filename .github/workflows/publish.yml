@@ -38,15 +38,6 @@ jobs:
           echo "path=$JAR_PATH" >> $GITHUB_OUTPUT
           echo "Found JAR: $JAR_PATH"
 
-      - name: Determine game versions
-        id: game
-        run: |
-          if [[ "${{ github.ref_name }}" == *"-1.20"* ]]; then
-            echo "versions=>=1.20 <1.21" >> $GITHUB_OUTPUT
-          else
-            echo "versions=>=1.21" >> $GITHUB_OUTPUT
-          fi
-
       - name: Upload to Modrinth & CurseForge
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -62,7 +53,7 @@ jobs:
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
 
-          game-versions: ${{ steps.game.outputs.versions }}
+          game-versions: ">=1.21"
 
           loaders: |
             paper
