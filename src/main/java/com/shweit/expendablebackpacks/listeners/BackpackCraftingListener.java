@@ -144,6 +144,64 @@ public class BackpackCraftingListener implements Listener {
     }
 
     /**
+     * Handles the actual craft action for backpack upgrades, consuming exactly one item
+     * per surrounding slot and preventing item duplication from stacked ingredients.
+     * This is required because upgrades use a custom result set via PrepareItemCraftEvent
+     * without a matching registered recipe, so Minecraft's default consumption does not apply.
+     *
+     * @param event the craft item event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onCraftItem(CraftItemEvent event) {
+        CraftingInventory inv = event.getInventory();
+        ItemStack result = inv.getResult();
+        if (result == null || !BackpackItem.isBackpack(result)) {
+            return;
+        }
+
+        ItemStack[] matrix = inv.getMatrix();
+
+        // Only handle upgrade crafts: 3x3 grid with a backpack in the center slot
+        if (matrix == null || matrix.length != 9 || !BackpackItem.isBackpack(matrix[4])) {
+            return;
+        }
+
+        // Cancel default behaviour to take full control of result distribution and consumption
+        event.setCancelled(true);
+
+        Player player = (Player) event.getWhoClicked();
+
+        // Distribute result to player based on click type
+        if (event.getClick().isShiftClick()) {
+            player.getInventory().addItem(result.clone());
+        } else {
+            ItemStack cursor = player.getItemOnCursor();
+            if (cursor != null && cursor.getType() != Material.AIR) {
+                return; // Cursor occupied — cannot take result
+            }
+            player.setItemOnCursor(result.clone());
+        }
+
+        // Consume exactly 1 item from each of the 8 surrounding slots
+        int[] surrounding = {0, 1, 2, 3, 5, 6, 7, 8};
+        for (int i : surrounding) {
+            ItemStack slot = matrix[i];
+            if (slot == null || slot.getType() == Material.AIR) {
+                continue;
+            }
+            if (slot.getAmount() > 1) {
+                ItemStack reduced = slot.clone();
+                reduced.setAmount(slot.getAmount() - 1);
+                inv.setItem(i + 1, reduced);
+            } else {
+                inv.setItem(i + 1, null);
+            }
+        }
+        // Clear the center backpack slot (matrix index 4 = inventory slot 5)
+        inv.setItem(5, null);
+    }
+
+    /**
      * Check if the pattern matches Leather Backpack crafting.
      * L S L
      * L C L
