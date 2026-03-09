@@ -53,7 +53,7 @@ jobs:
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
 
-          game-versions: ">=1.21"
+          game-versions: ">=1.20 <1.21"
 
           loaders: |
             paper
