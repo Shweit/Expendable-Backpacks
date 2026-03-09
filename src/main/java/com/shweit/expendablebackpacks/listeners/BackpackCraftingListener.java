@@ -4,14 +4,13 @@ import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
@@ -144,16 +143,24 @@ public class BackpackCraftingListener implements Listener {
     }
 
     /**
-     * Handles the actual craft action for backpack upgrades, consuming exactly one item
-     * per surrounding slot and preventing item duplication from stacked ingredients.
-     * This is required because upgrades use a custom result set via PrepareItemCraftEvent
-     * without a matching registered recipe, so Minecraft's default consumption does not apply.
+     * Handles clicks on the crafting result slot for backpack upgrades.
+     * Upgrade recipes use a custom result set via PrepareItemCraftEvent without a matching
+     * registered recipe, so Minecraft's default ingredient consumption does not apply.
+     * This handler manually controls result distribution and consumes exactly one item
+     * per surrounding slot to prevent item duplication from stacked ingredients.
      *
-     * @param event the craft item event
+     * @param event the inventory click event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onCraftItem(CraftItemEvent event) {
-        CraftingInventory inv = event.getInventory();
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getSlotType() != InventoryType.SlotType.RESULT) {
+            return;
+        }
+        if (!(event.getInventory() instanceof CraftingInventory)) {
+            return;
+        }
+        CraftingInventory inv = (CraftingInventory) event.getInventory();
+
         ItemStack result = inv.getResult();
         if (result == null || !BackpackItem.isBackpack(result)) {
             return;
