@@ -48,7 +48,7 @@ public class ExpendableBackpacks extends JavaPlugin {
         getServer().getPluginManager().registerEvents(
             new BackpackInteractionListener(backpackManager), this);
         getServer().getPluginManager().registerEvents(
-            new BackpackProtectionListener(), this);
+            new BackpackProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(
             new BackpackBlockListener(), this);
         getServer().getPluginManager().registerEvents(

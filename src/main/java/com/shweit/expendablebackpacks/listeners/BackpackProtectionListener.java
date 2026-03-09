@@ -8,11 +8,25 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Prevents backpacks from being placed inside other backpacks (inception protection).
+ * Can be disabled via the {@code allow-backpack-inception} config option.
  */
 public class BackpackProtectionListener implements Listener {
+
+    private final Plugin plugin;
+
+    /**
+     * Creates a new backpack protection listener.
+     *
+     * @param plugin the plugin instance used to read configuration
+     */
+    @SuppressWarnings("EI_EXPOSE_REP2")
+    public BackpackProtectionListener(Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     /**
      * Handles inventory click events to prevent backpack inception.
@@ -21,6 +35,10 @@ public class BackpackProtectionListener implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (plugin.getConfig().getBoolean("allow-backpack-inception", false)) {
+            return;
+        }
+
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) {
             return;
@@ -64,6 +82,10 @@ public class BackpackProtectionListener implements Listener {
      */
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
+        if (plugin.getConfig().getBoolean("allow-backpack-inception", false)) {
+            return;
+        }
+
         // Check if dragging into a backpack inventory by title
         String title = event.getView().getTitle();
         if (!isBackpackTitle(title)) {
