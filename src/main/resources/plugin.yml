@@ -4,6 +4,7 @@ main: com.shweit.expendablebackpacks.ExpendableBackpacks
 api-version: '1.21'
 author: Shweit
 description: Expendable Backpacks - Expandable Storage for Minecraft!
+folia-supported: true
 
 commands:
   backpack:
