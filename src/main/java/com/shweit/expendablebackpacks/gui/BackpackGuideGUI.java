@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -31,7 +32,8 @@ public class BackpackGuideGUI implements Listener {
      * @param player the player to open the GUI for.
      */
     public static void openMainGuide(Player player) {
-        Inventory gui = Bukkit.createInventory(null, 54, MAIN_TITLE);
+        GuideInventoryHolder holder = new GuideInventoryHolder(MAIN_TITLE, null);
+        Inventory gui = holder.getInventory();
 
         // Title item
         ItemStack title = createGuideItem(Material.CHEST,
@@ -105,7 +107,8 @@ public class BackpackGuideGUI implements Listener {
      * @param tier the backpack tier to show details for.
      */
     public static void openTierDetail(Player player, BackpackTier tier) {
-        Inventory gui = Bukkit.createInventory(null, 54, detailTitle(tier));
+        GuideInventoryHolder holder = new GuideInventoryHolder(detailTitle(tier), tier);
+        Inventory gui = holder.getInventory();
 
         // The backpack itself
         ItemStack backpack = BackpackItem.createBackpack(tier);
@@ -386,12 +389,8 @@ public class BackpackGuideGUI implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Component title = event.getView().title();
-        boolean mainGuide = title.equals(MAIN_TITLE);
-        boolean detailGuide = isDetailTitle(title);
-
-        // Check if it's our GUI
-        if (!mainGuide && !detailGuide) {
+        InventoryHolder holder = event.getView().getTopInventory().getHolder();
+        if (!(holder instanceof GuideInventoryHolder guideHolder)) {
             return;
         }
 
@@ -409,7 +408,7 @@ public class BackpackGuideGUI implements Listener {
         }
 
         // Main guide - clicking on backpack opens detail view
-        if (mainGuide) {
+        if (guideHolder.getTier() == null) {
             if (BackpackItem.isBackpack(clicked)) {
                 BackpackTier tier = BackpackItem.getBackpackTier(clicked);
                 if (tier != null) {
@@ -418,7 +417,7 @@ public class BackpackGuideGUI implements Listener {
                         org.bukkit.Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
                 }
             }
-        } else if (detailGuide) {
+        } else {
             // Detail view - back button
             if (clicked.getType() == Material.ARROW) {
                 openMainGuide(player);
@@ -432,12 +431,24 @@ public class BackpackGuideGUI implements Listener {
         return TextUtil.fromLegacy(DETAIL_TITLE_PREFIX + tier.getDisplayName());
     }
 
-    private static boolean isDetailTitle(Component title) {
-        for (BackpackTier tier : BackpackTier.values()) {
-            if (title.equals(detailTitle(tier))) {
-                return true;
-            }
+    private static final class GuideInventoryHolder implements InventoryHolder {
+
+        private final Inventory inventory;
+        private final BackpackTier tier;
+
+        private GuideInventoryHolder(Component title, BackpackTier tier) {
+            this.tier = tier;
+            this.inventory = Bukkit.createInventory(this, 54, title);
         }
-        return false;
+
+        @Override
+        @SuppressWarnings("EI_EXPOSE_REP")
+        public Inventory getInventory() {
+            return inventory;
+        }
+
+        private BackpackTier getTier() {
+            return tier;
+        }
     }
 }
