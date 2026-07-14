@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     tags:
-      - 'v*' # For v1.0, v0.1.0, etc
+      - 'v*-mc*' # For v1.3.0-mc26.2, v1.2.1-mc1.21, etc.
 
 concurrency:
   group: ${{ format('{0}-{1}', github.workflow, github.ref) }}

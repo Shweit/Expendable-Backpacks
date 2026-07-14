@@ -2,8 +2,10 @@ package com.shweit.expendablebackpacks.gui;
 
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
+import com.shweit.expendablebackpacks.util.TextUtil;
 import java.util.ArrayList;
 import java.util.List;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,7 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class BackpackGuideGUI implements Listener {
 
-    private static final String MAIN_TITLE = "§6§lBackpack Guide";
+    private static final Component MAIN_TITLE = TextUtil.fromLegacy("§6§lBackpack Guide");
     private static final String DETAIL_TITLE_PREFIX = "§6§l";
 
     /**
@@ -48,15 +50,15 @@ public class BackpackGuideGUI implements Listener {
 
             // Add lore explaining to click for details
             ItemMeta meta = backpack.getItemMeta();
-            List<String> lore = meta.getLore();
+            List<Component> lore = meta.lore();
             if (lore == null) {
                 lore = new ArrayList<>();
             } else {
                 lore = new ArrayList<>(lore);
             }
-            lore.add("");
-            lore.add("§e§l▶ Click for details!");
-            meta.setLore(lore);
+            lore.add(Component.empty());
+            lore.add(TextUtil.fromLegacy("§e§l▶ Click for details!"));
+            meta.lore(lore);
             if (!backpack.setItemMeta(meta)) {
                 // Fallback if meta setting fails
                 backpack = BackpackItem.createBackpack(tier);
@@ -103,8 +105,7 @@ public class BackpackGuideGUI implements Listener {
      * @param tier the backpack tier to show details for.
      */
     public static void openTierDetail(Player player, BackpackTier tier) {
-        Inventory gui = Bukkit.createInventory(null, 54,
-            DETAIL_TITLE_PREFIX + tier.getDisplayName());
+        Inventory gui = Bukkit.createInventory(null, 54, detailTitle(tier));
 
         // The backpack itself
         ItemStack backpack = BackpackItem.createBackpack(tier);
@@ -341,13 +342,13 @@ public class BackpackGuideGUI implements Listener {
         ItemMeta meta = item.getItemMeta();
 
         if (lore.length > 0) {
-            meta.setDisplayName(lore[0]);
+            meta.displayName(TextUtil.fromLegacy(lore[0]));
             if (lore.length > 1) {
                 List<String> loreList = new ArrayList<>();
                 for (int i = 1; i < lore.length; i++) {
                     loreList.add(lore[i]);
                 }
-                meta.setLore(loreList);
+                meta.lore(TextUtil.fromLegacy(loreList));
             }
         }
 
@@ -385,11 +386,12 @@ public class BackpackGuideGUI implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        String title = event.getView().getTitle();
+        Component title = event.getView().title();
+        boolean mainGuide = title.equals(MAIN_TITLE);
+        boolean detailGuide = isDetailTitle(title);
 
         // Check if it's our GUI
-        if (!title.equals(MAIN_TITLE)
-            && !title.startsWith(DETAIL_TITLE_PREFIX)) {
+        if (!mainGuide && !detailGuide) {
             return;
         }
 
@@ -407,7 +409,7 @@ public class BackpackGuideGUI implements Listener {
         }
 
         // Main guide - clicking on backpack opens detail view
-        if (title.equals(MAIN_TITLE)) {
+        if (mainGuide) {
             if (BackpackItem.isBackpack(clicked)) {
                 BackpackTier tier = BackpackItem.getBackpackTier(clicked);
                 if (tier != null) {
@@ -416,7 +418,7 @@ public class BackpackGuideGUI implements Listener {
                         org.bukkit.Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
                 }
             }
-        } else if (title.startsWith(DETAIL_TITLE_PREFIX)) {
+        } else if (detailGuide) {
             // Detail view - back button
             if (clicked.getType() == Material.ARROW) {
                 openMainGuide(player);
@@ -424,5 +426,18 @@ public class BackpackGuideGUI implements Listener {
                     org.bukkit.Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
             }
         }
+    }
+
+    private static Component detailTitle(BackpackTier tier) {
+        return TextUtil.fromLegacy(DETAIL_TITLE_PREFIX + tier.getDisplayName());
+    }
+
+    private static boolean isDetailTitle(Component title) {
+        for (BackpackTier tier : BackpackTier.values()) {
+            if (title.equals(detailTitle(tier))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

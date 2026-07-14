@@ -4,6 +4,7 @@ import com.shweit.expendablebackpacks.gui.BackpackGuideGUI;
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
+import com.shweit.expendablebackpacks.util.TextUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -191,7 +192,8 @@ public class BackpackCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) sender;
         // Open with generic title since we don't know the tier
-        Inventory inventory = backpackManager.getInventory(backpackUUID, "§7Backpack", 27);
+        Inventory inventory = backpackManager.getInventory(
+            backpackUUID, TextUtil.fromLegacy("§7Backpack"), 27);
         player.openInventory(inventory);
         player.sendMessage("§aOpened backpack: §7"
             + backpackUUID.toString().substring(0, 8) + "...");

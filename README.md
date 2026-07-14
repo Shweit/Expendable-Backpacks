@@ -1,8 +1,8 @@
 # Expendable Backpacks
 
-A comprehensive backpack plugin for Paper/Spigot servers featuring eight unique tiers, progressive upgrades, and shared storage capabilities through the Enderpack system.
+A comprehensive backpack plugin for Paper-compatible servers featuring eight unique tiers, progressive upgrades, and shared storage capabilities through the Enderpack system.
 
-[![Minecraft](https://img.shields.io/badge/minecraft-1.21.1+-green.svg)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/minecraft-26.2-green.svg)](https://www.minecraft.net/)
 [![License](https://img.shields.io/badge/license-%20%20GNU%20GPLv3%20-yellow?style=plastic)](LICENSE)
 
 ---
@@ -127,9 +127,9 @@ All commands can be abbreviated using `/bp` as an alias for `/backpack`.
 4. Use `/backpack` to access the interactive guide
 
 ### Requirements
-- Minecraft Version: 1.21.1 or higher
-- Server Software: Paper or Spigot
-- Java Version: 21 or higher
+- Minecraft Version: 26.2
+- Server Software: Paper, Purpur, or Folia
+- Java Version: 25 or higher
 
 ---
 
