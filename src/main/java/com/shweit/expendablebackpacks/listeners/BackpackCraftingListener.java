@@ -3,6 +3,8 @@ package com.shweit.expendablebackpacks.listeners;
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
+
+import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
