@@ -7,6 +7,19 @@
 # Starter Backpack Settings
 # ---------------------------
 
+# ---------------------------
+# Inception Settings
+# ---------------------------
+
+# Allow players to place backpacks inside other backpacks
+# Set to 'true' to enable the "Inception" mode, 'false' to disable
+# Default: false
+allow-backpack-inception: false
+
+# ---------------------------
+# Starter Backpack Settings
+# ---------------------------
+
 # Give a Leather Backpack to players when they first join the server
 # Set to 'true' to enable, 'false' to disable
 # Default: false

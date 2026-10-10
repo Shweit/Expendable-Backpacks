@@ -3,7 +3,9 @@ package com.shweit.expendablebackpacks.listeners;
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
+
 import java.util.Objects;
+import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -143,97 +145,69 @@ public class BackpackCraftingListener implements Listener {
     }
 
     /**
-     * Handles clicks on the result slot for backpack upgrades.
-     *
-     * <p>Upgrade results are dynamically created in PrepareItemCraftEvent. The registered
-     * recipe result uses a dummy backpack with a different UUID, so the normal Bukkit
-     * transaction cannot reliably consume stacked ingredients.</p>
+     * Handles clicks on the crafting result slot for backpack upgrades.
+     * Upgrade recipes use a custom result set via PrepareItemCraftEvent without a matching
+     * registered recipe, so Minecraft's default ingredient consumption does not apply.
+     * This handler manually controls result distribution and consumes exactly one item
+     * per surrounding slot to prevent item duplication from stacked ingredients.
      *
      * @param event the inventory click event
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getSlotType() != InventoryType.SlotType.RESULT
-            || !(event.getInventory() instanceof CraftingInventory)) {
+        if (event.getSlotType() != InventoryType.SlotType.RESULT) {
+            return;
+        }
+        if (!(event.getInventory() instanceof CraftingInventory)) {
+            return;
+        }
+        CraftingInventory inv = (CraftingInventory) event.getInventory();
+
+        ItemStack result = inv.getResult();
+        if (result == null || !BackpackItem.isBackpack(result)) {
             return;
         }
 
-        CraftingInventory inventory = (CraftingInventory) event.getInventory();
-        ItemStack[] matrix = Objects.requireNonNull(inventory.getMatrix(),
-            "Crafting inventory returned a null matrix");
-        ItemStack result = inventory.getResult();
+        ItemStack[] matrix = inv.getMatrix();
 
-        if (matrix.length != 9
-            || result == null
-            || !BackpackItem.isBackpack(result)
-            || !isUpgradePattern(matrix)) {
+        // Only handle upgrade crafts: 3x3 grid with a backpack in the center slot
+        if (matrix == null || matrix.length != 9 || !BackpackItem.isBackpack(matrix[4])) {
             return;
         }
 
-        Player player = (Player) event.getWhoClicked();
-        if (!event.getClick().isShiftClick()
-            && player.getItemOnCursor().getType() != Material.AIR) {
-            return;
-        }
-
+        // Cancel default behaviour to take full control of result distribution and consumption
         event.setCancelled(true);
 
+        Player player = (Player) event.getWhoClicked();
+
+        // Distribute result to player based on click type
         if (event.getClick().isShiftClick()) {
             player.getInventory().addItem(result.clone());
         } else {
+            ItemStack cursor = player.getItemOnCursor();
+            if (cursor != null && cursor.getType() != Material.AIR) {
+                return; // Cursor occupied — cannot take result
+            }
             player.setItemOnCursor(result.clone());
         }
 
-        consumeUpgradeIngredients(inventory, matrix);
-    }
-
-    /**
-     * Checks whether the matrix contains a valid backpack upgrade.
-     *
-     * @param matrix the crafting matrix
-     * @return true if the matrix is a valid upgrade
-     */
-    private boolean isUpgradePattern(ItemStack[] matrix) {
-        if (!BackpackItem.isBackpack(matrix[4])) {
-            return false;
-        }
-
-        BackpackTier currentTier = BackpackItem.getBackpackTier(matrix[4]);
-        Material surrounding = getSurroundingMaterial(matrix);
-        if (currentTier == null || surrounding == null) {
-            return false;
-        }
-
-        return (surrounding == Material.DIRT && currentTier == BackpackTier.LEATHER)
-            || (surrounding == Material.COPPER_INGOT && currentTier == BackpackTier.LEATHER)
-            || (surrounding == Material.IRON_INGOT && currentTier == BackpackTier.COPPER)
-            || (surrounding == Material.GOLD_INGOT && currentTier == BackpackTier.IRON)
-            || (surrounding == Material.DIAMOND && currentTier == BackpackTier.GOLD);
-    }
-
-    /**
-     * Consumes one backpack and one item from each surrounding slot.
-     *
-     * @param inventory the crafting inventory
-     * @param matrix the current crafting matrix
-     */
-    private void consumeUpgradeIngredients(CraftingInventory inventory, ItemStack[] matrix) {
+        // Consume exactly 1 item from each of the 8 surrounding slots
         int[] surrounding = {0, 1, 2, 3, 5, 6, 7, 8};
-        for (int index : surrounding) {
-            ItemStack ingredient = matrix[index];
-            if (ingredient == null || ingredient.getType() == Material.AIR) {
+        for (int i : surrounding) {
+            ItemStack slot = matrix[i];
+            if (slot == null || slot.getType() == Material.AIR) {
                 continue;
             }
-            if (ingredient.getAmount() == 1) {
-                matrix[index] = null;
+            if (slot.getAmount() > 1) {
+                ItemStack reduced = slot.clone();
+                reduced.setAmount(slot.getAmount() - 1);
+                inv.setItem(i + 1, reduced);
             } else {
-                ItemStack remaining = ingredient.clone();
-                remaining.setAmount(ingredient.getAmount() - 1);
-                matrix[index] = remaining;
+                inv.setItem(i + 1, null);
             }
         }
-        matrix[4] = null;
-        inventory.setMatrix(matrix);
+        // Clear the center backpack slot (matrix index 4 = inventory slot 5)
+        inv.setItem(5, null);
     }
 
     /**

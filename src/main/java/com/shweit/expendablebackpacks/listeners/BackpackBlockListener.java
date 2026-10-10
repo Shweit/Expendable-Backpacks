@@ -1,13 +1,12 @@
 package com.shweit.expendablebackpacks.listeners;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.util.BackpackBlockUtil;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -64,27 +63,32 @@ public class BackpackBlockListener implements Listener {
         }
 
         // Set the skull texture and store backpack data
-        if (block.getState() instanceof Skull skull) {
-            // Set the texture using Paper's profile API
-            String textureValue = tier.getTextureValue();
-            if (textureValue != null && !textureValue.startsWith("PLACEHOLDER")) {
-                try {
-                    PlayerProfile profile = Bukkit.createProfile(backpackUUID);
-                    profile.getProperties().add(
-                        new ProfileProperty("textures", textureValue));
-                    skull.setPlayerProfile(profile);
-                } catch (Exception e) {
-                    player.sendMessage("§cError: Failed to set backpack texture!");
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-
+        if (block.getState() instanceof Skull) {
             // Store UUID and tier in the block's PDC
             if (!BackpackBlockUtil.setBlockData(block, backpackUUID, tier)) {
                 player.sendMessage("§cError: Failed to store backpack data!");
                 event.setCancelled(true);
                 return;
+            }
+
+            // Set the texture using Paper's current resolvable profile API
+            String textureValue = tier.getTextureValue();
+            if (textureValue != null && !textureValue.startsWith("PLACEHOLDER")) {
+                try {
+                    ResolvableProfile profile = ResolvableProfile.resolvableProfile()
+                        .uuid(backpackUUID)
+                        .addProperty(new ProfileProperty("textures", textureValue))
+                        .build();
+                    Skull skull = (Skull) block.getState();
+                    skull.setProfile(profile);
+                    if (!skull.update()) {
+                        throw new IllegalStateException("Failed to update backpack skull");
+                    }
+                } catch (Exception e) {
+                    player.sendMessage("§cError: Failed to set backpack texture!");
+                    event.setCancelled(true);
+                    return;
+                }
             }
 
             player.sendMessage("§7Backpack placed! §8(Right-click to open)");

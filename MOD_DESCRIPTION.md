@@ -129,9 +129,9 @@ starter-backpack-message: "&7Welcome! You've been given a &7Leather Backpack &7t
 
 ### Requirements
 
-*   **Server Software:** Paper, Spigot, Purpur, or Folia
-*   **Minecraft Version:** 1.21 or higher
-*   **Java Version:** 21 or higher
+*   **Server Software:** Paper, Purpur, or Folia
+*   **Minecraft Version:** 26.2
+*   **Java Version:** 25 or higher
 
 ***
 

@@ -157,6 +157,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Updated the plugin to Minecraft 26.2 and Java 25
+- Updated the Paper API dependency to the current 26.2 build line
+- Migrated inventory titles, item names, lore, and configurable messages to Adventure components
+- Migrated placed backpack textures to Paper's resolvable profile API
+- Backpack inventories are now identified by their managed inventory instance instead of legacy titles
+
 ### 🐛 Known Issues
 None currently reported
 

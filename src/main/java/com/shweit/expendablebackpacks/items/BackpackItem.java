@@ -2,6 +2,7 @@ package com.shweit.expendablebackpacks.items;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import com.shweit.expendablebackpacks.util.TextUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,7 +61,7 @@ public class BackpackItem {
         ItemMeta meta = item.getItemMeta();
 
         // Set display name
-        meta.setDisplayName(tier.getDisplayName());
+        meta.displayName(TextUtil.fromLegacy(tier.getDisplayName()));
 
         // Set lore
         List<String> lore = new ArrayList<>();
@@ -74,7 +75,7 @@ public class BackpackItem {
         lore.add("");
         lore.add("§7Right-click to open");
         lore.add("§8ID: " + uuid.toString().substring(0, 8) + "...");
-        meta.setLore(lore);
+        meta.lore(TextUtil.fromLegacy(lore));
 
         // Set player head texture using Paper's profile API
         if (meta instanceof SkullMeta skullMeta) {

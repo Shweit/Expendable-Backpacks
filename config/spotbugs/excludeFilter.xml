@@ -15,6 +15,22 @@
         <Bug pattern="EI_EXPOSE_STATIC_REP2" />
     </Match>
 
+    <!-- Suppress null pointer warnings for getCommand() in onEnable — commands are guaranteed
+         to be present if declared in plugin.yml -->
+    <Match>
+        <Class name="com.shweit.expendablebackpacks.ExpendableBackpacks" />
+        <Method name="onEnable" />
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
+    </Match>
+
+    <!-- Suppress null pointer warning for getBackpackUUID — callers are expected to check
+         isBackpack() before calling this method -->
+    <Match>
+        <Class name="com.shweit.expendablebackpacks.items.BackpackItem" />
+        <Method name="getBackpackUUID" />
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
+    </Match>
+
     <!-- Suppress null pointer and redundant nullcheck warnings for BackpackCraftingListener.onCraft -->
     <!-- SpotBugs has conflicting warnings about getMatrix() nullability -->
     <Match>

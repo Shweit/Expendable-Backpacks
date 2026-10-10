@@ -1,18 +1,35 @@
 package com.shweit.expendablebackpacks.listeners;
 
 import com.shweit.expendablebackpacks.items.BackpackItem;
-import com.shweit.expendablebackpacks.items.BackpackTier;
+import com.shweit.expendablebackpacks.storage.BackpackManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Prevents backpacks from being placed inside other backpacks (inception protection).
+ * Can be disabled via the {@code allow-backpack-inception} config option.
  */
 public class BackpackProtectionListener implements Listener {
+
+    private final Plugin plugin;
+    private final BackpackManager backpackManager;
+
+    /**
+     * Creates a new backpack protection listener.
+     *
+     * @param plugin the plugin instance used to read configuration
+     * @param backpackManager the backpack manager used to identify inventories
+     */
+    @SuppressWarnings("EI_EXPOSE_REP2")
+    public BackpackProtectionListener(Plugin plugin, BackpackManager backpackManager) {
+        this.plugin = plugin;
+        this.backpackManager = backpackManager;
+    }
 
     /**
      * Handles inventory click events to prevent backpack inception.
@@ -21,6 +38,10 @@ public class BackpackProtectionListener implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (plugin.getConfig().getBoolean("allow-backpack-inception", false)) {
+            return;
+        }
+
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) {
             return;
@@ -30,9 +51,7 @@ public class BackpackProtectionListener implements Listener {
         ItemStack cursor = event.getCursor();
         ItemStack current = event.getCurrentItem();
 
-        // Check if top inventory is a backpack by checking the title
-        String title = event.getView().getTitle();
-        boolean topIsBackpack = isBackpackTitle(title);
+        boolean topIsBackpack = backpackManager.findInventoryUUID(topInventory) != null;
 
         // Prevent placing backpacks with cursor into backpack inventories
         if (topIsBackpack && clickedInventory == topInventory) {
@@ -64,9 +83,12 @@ public class BackpackProtectionListener implements Listener {
      */
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        // Check if dragging into a backpack inventory by title
-        String title = event.getView().getTitle();
-        if (!isBackpackTitle(title)) {
+        if (plugin.getConfig().getBoolean("allow-backpack-inception", false)) {
+            return;
+        }
+
+        Inventory topInventory = event.getView().getTopInventory();
+        if (backpackManager.findInventoryUUID(topInventory) == null) {
             return;
         }
 
@@ -78,25 +100,4 @@ public class BackpackProtectionListener implements Listener {
         }
     }
 
-    /**
-     * Check if a title matches a backpack inventory title.
-     * Backpack titles contain the tier display name (e.g., "Enderpack", "Diamond Backpack").
-     *
-     * @param title the title to check
-     * @return true if the title matches a backpack inventory
-     */
-    private boolean isBackpackTitle(String title) {
-        if (title == null) {
-            return false;
-        }
-
-        // Check if title contains any backpack tier name
-        for (BackpackTier tier : BackpackTier.values()) {
-            if (title.contains(tier.getDisplayName())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

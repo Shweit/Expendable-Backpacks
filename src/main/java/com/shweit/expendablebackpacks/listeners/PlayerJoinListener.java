@@ -2,7 +2,7 @@ package com.shweit.expendablebackpacks.listeners;
 
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
-import org.bukkit.ChatColor;
+import com.shweit.expendablebackpacks.util.TextUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,7 +57,7 @@ public class PlayerJoinListener implements Listener {
         // Send welcome message if configured
         String message = plugin.getConfig().getString("starter-backpack-message", "");
         if (message != null && !message.trim().isEmpty()) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            player.sendMessage(TextUtil.fromLegacyConfig(message));
         }
     }
 }

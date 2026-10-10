@@ -4,6 +4,7 @@ import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
 import com.shweit.expendablebackpacks.util.BackpackBlockUtil;
+import com.shweit.expendablebackpacks.util.TextUtil;
 import java.util.UUID;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -84,9 +85,8 @@ public class BackpackInteractionListener implements Listener {
         }
 
         // Get or create inventory
-        String title = tier.getDisplayName();
         Inventory inventory = backpackManager.getInventory(
-            backpackUUID, title, tier.getSlots());
+            backpackUUID, TextUtil.fromLegacy(tier.getDisplayName()), tier.getSlots());
 
         // Open for player
         player.openInventory(inventory);
@@ -115,9 +115,8 @@ public class BackpackInteractionListener implements Listener {
         }
 
         // Get or create inventory
-        String title = tier.getDisplayName();
         Inventory inventory = backpackManager.getInventory(
-            backpackUUID, title, tier.getSlots());
+            backpackUUID, TextUtil.fromLegacy(tier.getDisplayName()), tier.getSlots());
 
         // Open for player
         player.openInventory(inventory);
@@ -137,20 +136,6 @@ public class BackpackInteractionListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inv = event.getInventory();
-        String title = event.getView().getTitle();
-
-        // Check if it's a backpack inventory
-        boolean isBackpack = false;
-        for (BackpackTier tier : BackpackTier.values()) {
-            if (title.equals(tier.getDisplayName())) {
-                isBackpack = true;
-                break;
-            }
-        }
-
-        if (!isBackpack) {
-            return;
-        }
 
         // Find the backpack UUID from the player's inventory or the inventory holder
         // We need to save the inventory when closed

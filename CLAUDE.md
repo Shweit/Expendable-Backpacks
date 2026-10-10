@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Expendable Backpacks is a Paper/Spigot plugin for Minecraft 1.21.1+ featuring eight backpack tiers with progressive storage capacity (9-54 slots). The plugin includes a unique Enderpack system for shared storage across multiple backpack instances.
+Expendable Backpacks is a Paper plugin for Minecraft 26.2 featuring eight backpack tiers with progressive storage capacity (9-54 slots). The plugin includes a unique Enderpack system for shared storage across multiple backpack instances.
 
 **Core Technologies:**
-- Java 21
-- Paper API 1.21.10
+- Java 25
+- Paper API 26.2
 - Gradle build system with Shadow plugin
 - Google Java Style (enforced via Checkstyle)
 - SpotBugs with FindSecBugs for static analysis

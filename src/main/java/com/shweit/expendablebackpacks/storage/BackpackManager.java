@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
@@ -80,7 +81,7 @@ public class BackpackManager {
      * @return the inventory
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-    public Inventory getInventory(UUID backpackUuid, String title, int slots) {
+    public Inventory getInventory(UUID backpackUuid, Component title, int slots) {
         UUID backpackUUID = backpackUuid;
         // Check if already loaded in memory
         if (loadedInventories.containsKey(backpackUUID)) {
