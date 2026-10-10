@@ -3,15 +3,14 @@ package com.shweit.expendablebackpacks.listeners;
 import com.shweit.expendablebackpacks.items.BackpackItem;
 import com.shweit.expendablebackpacks.items.BackpackTier;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
-import java.util.UUID;
-import org.bukkit.Bukkit;
+import java.util.Objects;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
@@ -141,6 +140,100 @@ public class BackpackCraftingListener implements Listener {
             ItemStack upgraded = BackpackItem.upgradeBackpack(center, targetTier);
             inv.setResult(upgraded);
         }
+    }
+
+    /**
+     * Handles clicks on the result slot for backpack upgrades.
+     *
+     * <p>Upgrade results are dynamically created in PrepareItemCraftEvent. The registered
+     * recipe result uses a dummy backpack with a different UUID, so the normal Bukkit
+     * transaction cannot reliably consume stacked ingredients.</p>
+     *
+     * @param event the inventory click event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getSlotType() != InventoryType.SlotType.RESULT
+            || !(event.getInventory() instanceof CraftingInventory)) {
+            return;
+        }
+
+        CraftingInventory inventory = (CraftingInventory) event.getInventory();
+        ItemStack[] matrix = Objects.requireNonNull(inventory.getMatrix(),
+            "Crafting inventory returned a null matrix");
+        ItemStack result = inventory.getResult();
+
+        if (matrix.length != 9
+            || result == null
+            || !BackpackItem.isBackpack(result)
+            || !isUpgradePattern(matrix)) {
+            return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+        if (!event.getClick().isShiftClick()
+            && player.getItemOnCursor().getType() != Material.AIR) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        if (event.getClick().isShiftClick()) {
+            player.getInventory().addItem(result.clone());
+        } else {
+            player.setItemOnCursor(result.clone());
+        }
+
+        consumeUpgradeIngredients(inventory, matrix);
+    }
+
+    /**
+     * Checks whether the matrix contains a valid backpack upgrade.
+     *
+     * @param matrix the crafting matrix
+     * @return true if the matrix is a valid upgrade
+     */
+    private boolean isUpgradePattern(ItemStack[] matrix) {
+        if (!BackpackItem.isBackpack(matrix[4])) {
+            return false;
+        }
+
+        BackpackTier currentTier = BackpackItem.getBackpackTier(matrix[4]);
+        Material surrounding = getSurroundingMaterial(matrix);
+        if (currentTier == null || surrounding == null) {
+            return false;
+        }
+
+        return (surrounding == Material.DIRT && currentTier == BackpackTier.LEATHER)
+            || (surrounding == Material.COPPER_INGOT && currentTier == BackpackTier.LEATHER)
+            || (surrounding == Material.IRON_INGOT && currentTier == BackpackTier.COPPER)
+            || (surrounding == Material.GOLD_INGOT && currentTier == BackpackTier.IRON)
+            || (surrounding == Material.DIAMOND && currentTier == BackpackTier.GOLD);
+    }
+
+    /**
+     * Consumes one backpack and one item from each surrounding slot.
+     *
+     * @param inventory the crafting inventory
+     * @param matrix the current crafting matrix
+     */
+    private void consumeUpgradeIngredients(CraftingInventory inventory, ItemStack[] matrix) {
+        int[] surrounding = {0, 1, 2, 3, 5, 6, 7, 8};
+        for (int index : surrounding) {
+            ItemStack ingredient = matrix[index];
+            if (ingredient == null || ingredient.getType() == Material.AIR) {
+                continue;
+            }
+            if (ingredient.getAmount() == 1) {
+                matrix[index] = null;
+            } else {
+                ItemStack remaining = ingredient.clone();
+                remaining.setAmount(ingredient.getAmount() - 1);
+                matrix[index] = remaining;
+            }
+        }
+        matrix[4] = null;
+        inventory.setMatrix(matrix);
     }
 
     /**
